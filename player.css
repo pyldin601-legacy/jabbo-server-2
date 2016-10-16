@@ -1,0 +1,5 @@
+div.player { width:100%; height:100%; position:relative; border:none; }
+div.info { margin: 8px 9px; float:left; }
+div.info2 { margin: 8px 9px; float:right; }
+div.infocont { width:100%; }
+

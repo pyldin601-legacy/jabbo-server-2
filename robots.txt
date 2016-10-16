@@ -1,0 +1,6 @@
+# Robots.txt file created by http://4seo.biz
+# For domain: http://jabbo.tedirens.com
+
+# main section
+User-agent:*
+Disallow: /

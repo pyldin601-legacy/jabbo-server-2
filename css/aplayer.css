@@ -1,0 +1,175 @@
+div.fl_player { 
+	position:relative; 
+	width:370px; 
+	height:46; 
+	background:white; 
+	opacity:0; 
+	display:none; 
+	border:1px solid #eee
+}
+
+div.fl_player div.global_seeker { 
+	position:absolute; 
+	top:32px; 
+	left:90px; 
+	background:transparent; 
+	width:190px; 
+	height:5px; 
+}
+
+div.fl_player .loadBG { 
+	position:absolute; 
+	left:0; 
+	top:0; 
+	overflow:hidden; 
+	width:190px; 
+	height:1px; 
+	background-color:#eee; 
+}
+
+div.fl_player .loadBG .loadFG { 
+	overflow:hidden; 
+	width:0; 
+	height:1px; 
+	position:relative; 
+	top:0; 
+	left:0; 
+	background-color:black; 
+}
+
+div.fl_player div.global_seeker div.global_slider { 
+	position:absolute; 
+	left:8; 
+	top:1px; 
+}
+
+div.fl_player .ui-slider { 
+	position: relative; 
+	text-align: left; 
+	cursor: pointer; 
+}
+
+div.fl_player .ui-slider .ui-slider-handle { 
+	position: absolute; 
+	z-index:2; 
+	width:14px; 
+	height:4px; 
+	background:black; 
+	outline: none;  
+	-moz-border-radius:0 0 3px 3px;
+	-webkit-border-radius:0 0 3px 3px;
+	-khtml-border-radius:0 0 3px 3px;
+	border-radius:0 0 3px 3px;
+}
+
+div.fl_player .ui-slider-horizontal { 
+	height:4px; 
+	width:176px; 
+	background:transparent; 
+}
+
+div.fl_player .ui-slider-horizontal .ui-slider-handle { 
+	top: 0; 
+	margin-left: -8px;
+}
+
+div.fl_player div.global_tag { 
+	white-space:nowrap;
+	cursor:default;
+	position:relative; 
+	left:8px;
+	top:4px; 
+	width:352px; 
+	height:14px; 
+	font-weight:normal; 
+	font-size:11px; 
+	color:#385c91; 
+	background:transparent; 
+	text-align:center; 
+	text-overflow:ellipsis-word;
+	overflow:hidden;
+}
+
+div.fl_player div.global_time {
+	cursor:default;
+	position:absolute;
+	top:19px;
+	width:50px;
+	height:14px;
+	font-size:10px;
+	color:black;
+	background:transparent;
+}
+
+div.fl_player div.global_time_a { 
+	text-align:left;
+	left:90px;
+}
+
+div.fl_player div.global_time_b { 
+	right:90px;
+	text-align:right;
+}
+
+div.fl_player div.global_play {
+	position:absolute;
+	top:21px;
+	left:10px;
+	background:url(/images/glob-playpause.png) 0px 0px;
+	width:20px;
+	height:20px;
+}
+
+div.fl_player div.global_play_pause { 
+	background-position: 0px 20px;
+}
+
+div.fl_player div.global_close {
+	overflow:hidden;
+	position:absolute;
+	top:21px;
+	left:35px;
+	width:20px;
+	height:20px;
+	background:url(/images/glob-stop.png);
+}
+
+div.fl_player div.global_prev {
+	overflow:hidden;
+	position:absolute;
+	top:21px;
+	left:60px;
+	width:20px;
+	height:20px;
+	background:url(/images/glob-prevnext.png) 0px 0px;
+}
+
+div.fl_player div.global_next { 
+	overflow:hidden; 
+	position:absolute; 
+	top:21px; 
+	left:290px; 
+	width:20px; 
+	height:20px; 
+	background:url(/images/glob-prevnext.png) 0px -20px; 
+}
+
+div.fl_player div.global_rept { 
+	overflow:hidden; 
+	position:absolute; 
+	top:21px; 
+	left:315px; 
+	width:20px; 
+	height:20px; 
+	background:url(/images/media-repeat.png); opacity:0.3; 
+}
+
+div.fl_player div.global_plist { 
+	overflow:hidden; 
+	position:absolute; 
+	top:21px; 
+	left:340px; 
+	width:20px; 
+	height:20px; 
+	background:url(/images/icons/icon-playlist.png); opacity:0.3; 
+}

@@ -1,0 +1,91 @@
+form.query { 	
+	width:240; 
+	height:20px;
+	float:right;
+
+	border:1px solid #a5bcdf; 
+
+	margin:0; 
+	padding:0; 
+	background:white; 
+
+	border-radius:3px;
+	-moz-border-radius: 3px; 
+	-webkit-border-radius: 3px; 
+	-khtml-border-radius: 3px; 
+}
+
+
+form.query input.subject {
+	float:left;
+	width:220px;
+	height:20px;
+	border:none;
+
+	box-shadow:inset 0 0 3px #b6c9e5;
+	-moz-box-shadow:inset 0 0 3px #b6c9e5;
+
+	padding-left:1px;
+	font-size:0.9em;
+
+}
+
+form.working input.subject {
+	background-image:url(/images/search_ajax.gif);
+	background-repeat: no-repeat;
+	background-position: 196px center;
+}
+
+
+form.query input.submit { 
+	cursor:pointer; 
+
+	float:right;
+	width:20px;
+	height:20px; 
+	border:none; 
+
+	background:url(/images/search.png) no-repeat; 
+	opacity:0.5;
+	margin:0;
+	padding:0;
+}
+
+form.query input.submit:hover { 
+	opacity:0.8; 
+}
+
+form:not(.working)  .icon-help {
+	position:absolute;
+	width:16px;
+	height:16px;
+	background:url(/images/question1.png) no-repeat center center;
+	margin-top:2px;
+	right:16px;
+	opacity:0;
+	cursor:pointer;
+}
+
+form:not(.working)  .icon-help:hover {
+	opacity:1 !important;
+}
+
+form:not(.working)  .icon-engine {
+	position:absolute;
+	width:16px;
+	height:16px;
+	background:url(/images/icons/engine.png) no-repeat center center;
+	margin-top:2px;
+	right:34px;
+	opacity:0;
+	cursor:pointer;
+}
+
+form:not(.working)  .icon-engine:hover {
+	opacity:1 !important;
+}
+
+span.filter {
+    color: #666;
+    cursor: pointer;
+}

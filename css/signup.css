@@ -1,0 +1,30 @@
+div.su-body {
+	width:320px;
+	left:50%;
+	position:relative;
+	margin-left:-160px;
+	background-color:white;
+	text-align:center;
+}
+
+div.su-body h1 {
+	padding-top:10px;
+	font-size:14pt;
+}
+
+div.su-body .su-input {
+	width:100%;
+}
+
+div.su-body .su-table {
+	width:100%;
+	padding:10px;
+}
+
+div.su-body div.err {
+	padding:5px;
+	width:200px;
+	left:50%;
+	position:relative;
+	margin-left:-100px;
+}

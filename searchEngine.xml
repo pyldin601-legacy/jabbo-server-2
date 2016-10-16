@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+<ShortName>Jabbo File Server</ShortName>
+<Description>Поиск файлов в Jabbo Search Engine</Description>
+<Url type="text/html" method="GET" template="http://jabbo.tedirens.com/search.php?q={searchTerms}">
+</Url>
+<Image height="16" width="16" type="image/x-icon">http://jabbo.tedirens.com/images/favicon/jabbo-icon.png</Image>
+<Developer>Лахтадыр Роман</Developer>
+<InputEncoding>UTF-8</InputEncoding>
+<moz:SearchForm>http://jabbo.tedirens.com/</moz:SearchForm> 
+<Contact>roman_gemini@ukr.net</Contact>
+</OpenSearchDescription>

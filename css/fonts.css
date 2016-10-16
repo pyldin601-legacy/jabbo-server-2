@@ -1,0 +1,71 @@
+@import "http://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=latin,cyrillic";
+
+body {
+	font-family: "Open Sans", Verdana;
+	font-weight:normal;
+	font-size:10pt;
+}
+
+div.up-back {
+	font-weight:bold;
+}
+
+table, table td, table th, p, a, div, span {
+	font-size:inherit;
+	font-weight:inherit;
+}
+
+table.results .info, table.results .ri { 
+	font-size:1.2em;
+}
+
+table.results .ri {
+
+}
+
+table.results .sublink {
+	font-size:7.5pt;
+}
+
+.grey  { 
+	font-size:0.75em; 
+	color:grey;
+}
+
+a { text-decoration:none; color:#008; }
+
+div.popupMenu a.item 
+{ 
+	color:black; 
+	font-weight:normal; 
+}
+
+div.your-ip 
+{ 
+	font-size:7pt;
+	color:grey;
+}
+
+div.about-frame 
+{
+	font-size:0.8em;
+	color:white;
+	text-shadow: black 0px 0px 4px;
+}
+
+div.menu-panel {
+	color:white;
+}
+
+span.j_title {
+	font-size:1.4em; 
+}
+
+span.topbar-style {
+	font-size:0.7em;
+}
+
+.about-frame a {
+	color:white;
+	font-weight:bold;
+}

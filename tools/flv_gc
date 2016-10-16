@@ -1,0 +1,33 @@
+#!/usr/bin/perl
+
+# .flv garbage collector
+
+use FindBin qw($Bin);
+use DBI;
+use Term::ANSIColor;
+
+my $cache_locate = '/media/#ETC/JABBO_CACHE/FLV';
+
+$dbh = DBI->connect("dbi:mysql:search:localhost", "root", "") || die("Couldn't establish connection to database!");
+$dbh->do("SET NAMES 'utf8'");
+$unlinks = 0; $updates = 0;
+
+@flv_list = `find '$cache_locate' -type f -name '*.flv'`;
+
+foreach $file(@flv_list) {
+	chomp $file;
+	next unless (($fname) = $file =~ /[0-9a-f]{1}\/[0-9a-f]{2}\/([0-9a-f]{32})\.flv$/);
+	$ok = $dbh->do("SELECT * FROM `search_files` WHERE `md5` = '$fname'");
+	if($ok eq '0E0') {
+		$unlinks ++;
+		print $file, "\n";
+		unlink($file);
+	} else {
+		$updates ++;
+		$dbh->do("UPDATE `search_files` SET `encoded` = '1' WHERE `md5` = '$fname'");
+	}
+}
+
+$dbh->disconnect();
+
+print "Files erased: $unlinks, Previews total: $updates\n";

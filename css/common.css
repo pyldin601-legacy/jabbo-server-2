@@ -1,0 +1,89 @@
+.fx-blur {
+	box-shadow: 0 0 5px #222;
+	-webkit-box-shadow: 0 0 5px #222;
+	-moz-box-shadow: 0 0 5px #222; 
+}
+
+.fx-round {
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px; 
+	-khtml-border-radius:5px;
+	border-radius:5px;
+}
+
+.fx-round-top {
+	-moz-border-radius:5px 5px 0 0;
+	-webkit-border-radius:5px 5px 0 0; 
+	-khtml-border-radius:5px 5px 0 0;
+	border-radius:5px 5px 0 0;
+}
+
+.fx-round-br {
+	-moz-border-radius:0 0 5px 0;
+	-webkit-border-radius:0 0 5px 0; 
+	-khtml-border-radius:0 0 5px 0;
+	border-radius:0 0 5px 0;
+}
+
+
+.fx-round-top{
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	border-top-left-radius:5px;
+	border-top-right-radius:5px;
+}
+
+.fx-gradient {
+	background: #a0bfef;
+	background: -moz-linear-gradient(top, #b0cfff, #a0bfef);
+	background: -webkit-gradient(linear, left top, left bottom, from(#b0cfff), to(#a0bfef));
+	background: -o-linear-gradient(#b0cfff, #a0bfef);
+	filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#b0cfff', EndColorStr='#a0bfef', GradientType=0);
+}
+
+.txt-nowrap {
+	white-space: nowrap;
+}
+
+tr.location th {
+	line-height:145%;
+	font-size:0.95em;
+}
+
+tr.location th a { 
+	padding:0 4px; 
+	font-size:1em; 
+	-moz-border-radius:6px;	
+	-webkit-border-radius:6px; 
+	-khtml-border-radius:6px;
+	border-radius:6px;
+}
+
+tr.location th a.current { 
+	padding:0 4px; 
+	font-size:1em; 
+	-moz-border-radius:6px 6px 0 0;	
+	-webkit-border-radius:6px 6px 0 0; 
+	-khtml-border-radius:6px 6px 0 0;
+	border-radius:6px 6px 0 0;
+}
+
+tr.location th a.current,
+tr.location th a:hover { 
+	color:white;
+	background-color:#777;
+	box-shadow:inset 0 0 8px #333;
+	-moz-box-shadow:inset 0 0 8px #333;
+	-webkit-box-shadow:inset 0 0 8px #333;
+}
+
+.index-stats-td { font-size:.8em; }
+
+.noflow {
+	overflow:hidden;
+}
+
+.red-error {
+	border:1px solid #f99;
+	background-color:#fdd;
+}

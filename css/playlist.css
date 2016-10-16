@@ -1,0 +1,103 @@
+div.playlist-wrap {
+	width:350px;
+	margin:4px 0 0 0;
+	z-index:10;
+	display:none;
+	position:absolute;
+	background:white;
+	padding:0;
+	font-size:11px;
+}
+
+div.playlist-wrap .pl-corner {
+	position:absolute;
+	background: url(/images/playlist-corner.png) no-repeat;
+	width:17px;
+	height:9px;
+	z-index:0;
+	padding:0;
+	margin:0 0 0 -8px;
+	left:50%;
+	top:-9px;
+}
+
+div.playlist-wrap .pl-title {
+	margin:0;
+	padding:2px 4px;
+	text-align:center;
+	font-weight:bold;
+	background:#edf4fb;
+	color:black;
+}
+
+div.playlist-wrap .pl-contents {
+	height:0px;
+	overflow-x:hidden;
+	overflow-y:hidden;
+	margin:0;
+}
+
+div.playlist-wrap .pl-contents:hover {
+	overflow-y:auto;
+}
+
+
+div.playlist-wrap .pl-loc{
+	padding:2px 4px;
+	margin:4px 0;
+	text-align:right;
+	display:none;
+}
+
+div.playlist-wrap .pl-footer {
+	padding:0 0 2px 0;
+	margin:0;
+	background:#edf4fb;
+}
+
+
+div.playlist-wrap .pl-contents .track-item {
+	padding:2px 4px;
+	margin:2px 2px;
+	cursor:pointer;
+	overflow:hidden;
+}
+
+div.playlist-wrap .pl-contents .pl-contents-inner { 
+	padding:0;
+	margin:0;
+}
+
+div.playlist-wrap .pl-contents .track-item:hover {
+	background: #ffe;
+}
+
+div.playlist-wrap .track-total {
+	padding:2px 4px;
+	overflow:hidden;
+}
+
+div.playlist-wrap .track-title {
+	float: left;
+	max-width: 285px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+div.playlist-wrap .track-time {float:right}
+
+div.track-current {color:#385c91;background-color:#edf4fb}
+
+span.zero {visibility:hidden}
+
+div.playlist-wrap > a > img {opacity:0.5}
+div.playlist-wrap > a > img:hover {opacity:1}
+
+div.playlist-wrap div.undo {
+	width: 12px;
+	height: 12px;
+	float: right;
+	background: url("/images/icons/undo.png") no-repeat;
+	margin-top:2px;
+}

@@ -1,0 +1,319 @@
+#!/usr/bin/perl
+
+use FindBin qw($Bin);
+use DBI;
+use Term::ANSIColor;
+use threads;
+use threads::shared;
+use Digest::MD5 qw( md5_hex );
+use Time::HiRes qw( usleep );
+use JSON;
+use Date::Format;
+
+use Data::Dumper;
+
+chdir($Bin);
+
+my $threads = 2;
+
+select(STDERR);
+$| = 1;
+select(STDOUT); # default
+$| = 1;
+
+
+my @job_queue:shared = ();
+my $job_proc:shared = 0;
+my @status:shared = ();
+
+my @bad:shared = ();
+my @processing:shared = ();
+
+require "$Bin/Mediainfo.pm";
+
+my $cache_locate = '/medib/JC/FLV';
+my $flvtool_string = '/usr/local/bin/flvtool++ -nodump';
+my $logfile = 'log/encoder.log';
+
+my $encode_string_1 = "/usr/local/bin/ffmpeg -i <INFILE> <ID> -threads 1 -pass 1 -vcodec libx264 -preset fast -passlogfile log/log_<THREAD> -async 1 -b 320k -s <SIZE> -ab 128k -ar 44100 -ac 2 -keyint_min 240 -y -acodec libmp3lame -f flv /dev/null 2>&1 | awk '1;{fflush()}' RS='\r'";
+my $encode_string_2 = "/usr/local/bin/ffmpeg -i <INFILE> <ID> -threads 1 -pass 2 -vcodec libx264 -preset fast -passlogfile log/log_<THREAD> -async 1 -b 320k -s <SIZE> -ab 128k -ar 44100 -ac 2 -keyint_min 240 -y -acodec libmp3lame -f flv <OUTFILE> 2>&1 | awk '1;{fflush()}' RS='\r'";
+my $alternative_string = 'http://fs1.www.ex.ua/show/<MD5>/58922315/<MD5>.flv';
+
+
+for $y (1...$threads) {
+	push @threads, threads->create( \&proc_thread ); 
+}
+
+push @threads, threads->create( \&status_thread ); 
+push @threads, threads->create( \&init_job ); 
+
+foreach $thread(@threads) { $thread->join(); }
+
+sub init_job {
+	while(1) {
+		$dbh = DBI->connect("dbi:mysql:search:localhost", "root", "");
+		$dbh->do("set names 'utf8'");
+		$qr = $dbh->prepare(
+		   "SELECT a.* FROM search_files a
+			WHERE 
+				a.`filegroup` = 'video' AND 
+				a.`filetype` != 'flv' AND
+				a.`encoded` != '1' AND
+				NOT EXISTS(SELECT NULL FROM `jfs_lores_ban` b WHERE b.`md5` = a.`md5`)
+			GROUP BY `md5` 
+			ORDER BY `filepath` ASC"
+		);
+		$qr->execute();
+		while($row = $qr->fetchrow_hashref) {
+			$filename = $row->{filepath} . '/' . $row->{filename};
+			$filehash = $row->{md5};
+			push(@job_queue, "${filehash};${filename}") unless(is_do($filehash));
+		}
+		$dbh->disconnect();
+		sleep(60);
+		wait_jobs();
+	}
+}
+
+sub wait_jobs {
+	while(left() > 0) {
+		sleep 5;
+	}
+}
+
+sub left {
+	return ($#job_queue+1);
+}
+
+sub status_thread {
+	while(1) {
+		print "\xC";
+		printf("Encoder slots: (updated %s)\n\n", time2str('%d/%m/%y %T', time));
+		for $n(1...$#status) {
+			print " Slot $n: ", @status[$n], "\n";
+		}
+		print "\nJobs left: " . left() . "\n";
+		sleep(1);
+	}
+}
+
+sub proc_thread {
+
+	my $tid = threads->tid();
+
+	while(1) {
+        unless($a = shift @job_queue) {
+			@status[$tid] = '[idle]';
+            sleep 5;
+            next;
+        }
+		my ($filehash, $filename) = split(";", $a, 2);
+
+		@status[$tid] = (split("/", $filename))[-1];
+		@processing[$tid] = $filehash;
+
+		$video = video_size($filename);
+		$aid = audio_index($filename);
+
+		if($aid > -1) {
+			$map = "-map 0:v:0 -map 0:a:$aid";
+		} else {
+			$map = "";
+		}
+
+		if ($video == 0) {
+			ban_it($filehash);
+			$job_proc --;
+			next;
+		};
+
+		$esc_flvpath = esc_chars(flv_path($filehash));
+		$esc_flv = esc_chars(flv_path($filehash) . '/' . $filehash . '_tmp.flv');
+		$esc_flv2 = esc_chars(flv_path($filehash) . '/' . $filehash . '.flv');
+		$esc_file = esc_chars($filename);
+
+		system("mkdir -p $esc_flvpath");
+
+		%replacement = (
+				'<INFILE>' 	=> $esc_file,
+				'<OUTFILE>' => $esc_flv,
+				'<SIZE>' 	=> $video,
+				'<THREAD>' 	=> $tid,
+				'<ID>' 		=> $map
+		);
+		
+		$runstring_1 = sub_replace( \%replacement, $encode_string_1	);
+		$runstring_2 = sub_replace( \%replacement, $encode_string_2 );
+		
+		# First pass
+		my $cent = "0.0";
+		my $dur = 0;
+		my $pos = 0;
+		open(FH, "${runstring_1}|");
+		while($line = <FH>) {
+			$line =~ s/\x0a//gm;
+			$dur = sub_time2sec($1) if($line =~ m/Duration: (.*?), start:/);
+			$pos = sub_time2sec($1) if($line =~ m/time=(.*?) bitrate/);
+			$cent = sprintf("%1.1f", (50 / $dur * $pos)) if($dur > 0);
+			@status[$tid] = (split("/", $filename))[-1] . " ($cent%)";
+		}
+		$ecode = close(FH);
+		unless($ecode) {
+			ban_it($filehash);
+			$job_proc --;
+			next;
+		}
+
+		# Second pass
+		my $cent = "50.0";
+		open(FH, "${runstring_2}|");
+		while($line = <FH>) {
+			$line =~ s/\x0a//gm;
+			$dur = sub_time2sec($1) if($line =~ m/Duration: (.*?), start:/);
+			$pos = sub_time2sec($1) if($line =~ m/time=(.*?) bitrate/);
+			$cent = sprintf("%1.1f", 50 + (50 / $dur * $pos)) if($dur > 0);
+			@status[$tid] = (split("/", $filename))[-1] . " ($cent%)";
+		}
+		unless(close(FH)) {
+			ban_it($filehash);
+			$job_proc --;
+			next;
+		}
+
+		$cent = "100";
+		system("$flvtool_string ${esc_flv} ${esc_flv2} >/dev/null && rm ${esc_flv}") ;
+
+		@status[$tid] = (split("/", $filename))[-1] . " ($cent%)";
+	    done_it($filehash, $filename);
+		log_encoder("DONE: file:$filename, audio:$aid, size:$video");
+
+		
+		@processing[$tid] = '';
+		$job_proc --;
+	}
+}
+
+sub logger {
+	open LG, ">>", "/tmp/encoder.log";
+	print LG shift;
+	close LG;
+}
+
+sub ban_it {
+	my $md5 = shift;
+	$dbh = DBI->connect("dbi:mysql:search:localhost", "root", "") || die("Couldn't establish connection to mysql!");
+	$dbh->do(sprintf("INSERT IGNORE INTO `jfs_lores_ban` VALUES ('${md5}')"));
+	$dbh->disconnect();
+}
+
+sub done_it {
+	my $filehash = shift;
+	my $filename = shift;
+	$dbh = DBI->connect("dbi:mysql:search:localhost", "root", "") || die("Couldn't establish connection to mysql!");
+	$dbh->do("set names 'utf8'");
+	$dbh->do("UPDATE search_files SET `encoded` = '1' WHERE `md5` = '$filehash'");
+	$dbh->do(sprintf("INSERT INTO `jfs_lores_log` (`filename`,`md5`) VALUES (%s,%s)",
+				$dbh->quote((split('/',$filename))[-1]), $dbh->quote($filehash)));
+	$dbh->disconnect();
+}
+
+sub is_bad {
+	my $test = shift;
+	foreach $hash ( @bad ) {
+		return 1 if($hash eq $test);
+	}
+	return 0;
+}
+
+sub is_do {
+	my $test = shift;
+	foreach $hash ( @processing ) {
+		return 1 if($hash eq $test);
+	}
+	return 0;
+}
+
+
+
+sub flv_path {
+    my $hash = shift;
+    return "$cache_locate/" . substr($hash, 0, 1) . "/" . substr($hash, 0, 2);
+}
+
+sub video_size {
+	my $filename = shift;
+        my $media = new Mediainfo("filename" => $filename);
+
+	if($media->{width} == 0 || $media->{height} == 0) { return 0; }
+
+	my $asp = $media->{height} / $media->{width};
+        if($media->{width} > 512) {
+	        return '512x' . (int(512 * $asp / 2) * 2);
+	} else {
+	        return $media->{width} . 'x' . $media->{height};
+        }
+}
+
+sub esc_chars {
+    my $file = shift;
+    $file =~ s/([\x22])/\\$1/g;
+    return "\"$file\"";
+}
+
+sub audio_index {
+	my $file = esc_chars(shift);
+	my @langs = ('uk', 'ru', 'en');
+	my @media = `mediainfo -f $file`;
+	my $curr_id = -1;
+	my $lang = '';
+	foreach $line(@media) {
+		chomp $line;
+		if($line =~ /^Audio\s\#(\d+)$/) {
+			$curr_id = $1;
+		}
+		if($line =~ /^Audio$/) {
+			return -1;
+		}
+		if($line =~ /^Language/) {
+			$lang = (split(" : ", $line))[1];
+			foreach $l (@langs) {
+				return $curr_id if($lang eq $l);
+			}
+		}
+	}
+	return -1;
+}
+
+sub log_encoder {
+	my $str = shift;
+	open(LOG, ">>", $logfile);
+	print LOG timez();
+	print LOG ' ';
+	print LOG $str;
+	print LOG "\n";
+	close(LOG);
+}
+
+sub timez {
+        ($sec, $min, $hour) = (localtime(time))[0..2];
+        return sprintf("%02d:%02d:%02d", $hour, $min, $sec);
+}
+
+sub sub_replace {
+	my $replace = shift;
+	my $subject = shift;
+	foreach $key (keys %$replace) {
+		$meta = quotemeta($key);
+		$subject =~ s/$key/$replace->{$key}/g;
+	}
+	return $subject;
+}
+
+sub sub_time2sec {
+	my @digs = split(':', shift());
+	if($#digs == 2) {
+		return abs($digs[0]) * 3600 + abs($digs[1]) * 60 + abs($digs[2]);
+	} else {
+		return 0;
+	}
+}

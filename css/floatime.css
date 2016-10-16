@@ -1,0 +1,14 @@
+div.floatime {
+	z-index:1000;
+	background:#c6dfff;
+	position:fixed;
+	padding:2px 4px;
+	font-size:8pt;
+	left:0;
+	top:0;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px; 
+	-khtml-border-radius:3px;
+	border-radius:3px;
+	display:none;
+}

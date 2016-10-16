@@ -1,0 +1,21 @@
+tr.location th a.popupfolder img {
+	padding-left:1px;
+	vertical-align:middle;
+}
+
+tr.location th a.popupfolder:not(:hover) img {
+	opacity:0;
+}
+
+tr.location th a.popupfolder:hover  img,
+tr.location th a.popupfolder img, {
+	opacity:1;
+}
+
+.pf-window {
+	position:absolute;
+	background:white;
+	border:1px solid #777;
+	height:200px;
+	display:none;
+}

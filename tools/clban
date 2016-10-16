@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo TRUNCATE TABLE jfs_lores_ban | mysql -u root search

@@ -1,0 +1,44 @@
+div.login-frame {
+	width:312px;
+	position:absolute;
+	z-index:20;
+	left:50%;
+	margin-left:-156px;
+	margin-top:70px;
+	display:none;
+	background:white;
+	
+}
+
+div.login-frame .login-border {
+	position:relative;
+	margin:10px;
+}
+
+div.login-frame .login-title {
+	background:black;
+	color:white;
+	text-align:center;
+	padding:3px
+}
+
+.send {
+	width:100px;
+	height:20px;
+	box-shadow:inset 0 0 3px #b6c9e5;
+	-moz-box-shadow:inset 0 0 3px #b6c9e5;
+
+	border:none;
+	
+	border-radius:3px;
+	-moz-border-radius: 3px; 
+	-webkit-border-radius: 3px; 
+	-khtml-border-radius: 3px;
+	
+	padding:0 2px;
+}
+
+.icon-lastfm {
+	width:16px;
+	height:16px;
+}

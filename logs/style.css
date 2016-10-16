@@ -1,0 +1,24 @@
+@font-face {
+	font-family:'DejaVuSansMono';
+	font-style:normal;
+	font-weight:400;
+	src:url('DejaVuSansMono.ttf');
+}
+
+
+body,table,p {
+	font-family:'DejaVuSansMono';
+	font-size:10pt;
+	background-color:#000000;
+	color:#eeeeee;
+	padding:0;
+}
+
+div.data-log {
+	white-space:pre-line;
+	width:100%;
+}
+
+div.data-log span.date {
+	color:#00ff00;
+}

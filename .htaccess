@@ -1,0 +1,65 @@
+deny from all
+
+<FilesMatch "(\.js\.gz)$">
+	ForceType text/javascript
+	Header set Content-Encoding	"gzip"
+</FilesMatch>
+
+RewriteEngine on
+
+php_value session.gc_maxlifetime 2592000
+php_value session.cookie_lifetime 2592000
+#php_value session.save_path "/tmp/jabbo_sessions"
+
+# REDIRECTS
+RedirectMatch permanent ^/$ /home
+ErrorDocument 404 /404.php
+
+RewriteRule ^proxy/(.+)$                            proxy.php?url=$1&%{QUERY_STRING} [B]
+
+# SOLARSOUL FIX
+RewriteRule ^download/(\d+)/(Solarsoul.*)$ 		    restreamer.php?file=$2 [B]
+RewriteRule ^listen_random_mix_solarsoul.mp3$ 		restreamer.php?file=random.mp3 [L]
+
+# NAVIGATION URL
+RewriteRule ^(root|index|home)$	   			    	index.php?%{QUERY_STRING}
+RewriteRule ^go/(\d+)/(.+)$							index2.php?id=$1&name=$2&%{QUERY_STRING} [B]
+#RewriteRule ^dir\-(\d*)\-(.+)$ 				        index2.php?id=$1&name=$2&%{QUERY_STRING} [B]
+#RewriteRule ^dir\-exp\-(\d*)\-(.+)$ 		        index2.php?id=$1&name=$2&expand=1&%{QUERY_STRING} [B]
+
+# STREAMING ENTITIES
+RewriteRule ^prelisten/(\d+).mp3$ 			        restreamer.php?id=$1 [L]
+RewriteRule ^prelisten\-(\w+)/(\d+).mp3$ 	        restreamer.php?session=$1&id=$2 [L]
+RewriteRule ^prelisten/(\d+).txt$ 			        restreamer.php?id=$1 [L]
+
+RewriteRule ^watch$ 						        watch.php?%{QUERY_STRING} [L]
+RewriteRule ^stream/(\d+)\.flv$				        watch.php?i=$1&%{QUERY_STRING} [L]
+
+# DOWNLOAD LINKS
+#RewriteRule ^download/(\d+)/(.*)$ 			        download.php?id=$1&file=$2 [B]
+#RewriteRule ^download/(\d+)$ 				        download.php?id=$1 [B]
+
+# zaSHITa
+RewriteRule ^mp3\-(\d+)\-(\w+)/(.*)\.doc$ 	        mp3.php?id=$1&session=$2&file=$3&%{QUERY_STRING} [B]
+RewriteRule ^fs\-(\w+)(\/.*)\/(.*)\.doc$            download.php?session=$1&path=$2&file=$3 [B]
+
+# NEW DOWNLOAD LINKS
+RewriteRule ^mp3\-(\d+)\-(\w+)/(.*)$ 		        mp3.php?id=$1&session=$2&file=$3&%{QUERY_STRING} [B]
+RewriteRule ^fs\-(\w+)(\/.*)\/(.*)$                 download.php?session=$1&path=$2&file=$3 [B]
+
+# DL BY SESSION
+RewriteRule ^file\-(\d+)\-(\w+)/(.+)$ 		        download.php?id=$1&session=$2&file=$3&%{QUERY_STRING} [B]
+# DL BY UNIQUE ID
+RewriteRule ^file\-(\d+)\-{2}(\w+)/(.+)$		        download.php?id=$1&t=$2&file=$3&%{QUERY_STRING} [B]
+
+RewriteRule ^file/(.*)$ 					        download.php?file=$1 [B]
+
+# COMPRESSOR URL
+RewriteRule ^zip\-(\d+)\-(\w+)/(.+).zip$ 	        zip.php?d=$1&session=$2&f=$3&%{QUERY_STRING} [B]
+
+# URLS
+RewriteRule ^filelist\-(\w+)/(\d+)\.urls$ 	        urls.php?session=$1&id=$2&%{QUERY_STRING} [B]
+RewriteRule ^playlist\-(\w+)/(\d+)\.m3u8$ 	        m3u.php?session=$1&id=$2&%{QUERY_STRING} [B]
+
+#RewriteRule ^robots.txt$ 					        download.php?id=2434263 [L]
+
